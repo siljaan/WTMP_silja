@@ -23,7 +23,11 @@ module.exports = {
       meta: {
         viewport: 'width=device-width, initial-scale=1.0'
       },
-      template: './src/index.html'
+      template: './src/index.html',
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true
+      },
     })
   ],
   output: {
@@ -44,6 +48,17 @@ module.exports = {
         options: {
           // eslint options (check .eslintrc.json too)
         }
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          'css-loader',
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,

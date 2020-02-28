@@ -1,0 +1,8 @@
+$primary-font-color: #3939a9;
+
+body {
+  color: $primary-font-color;
+  margin: 2.5em 8em;
+  background-image: url('./webpack-logo.png');
+  background-repeat: no-repeat;
+}
