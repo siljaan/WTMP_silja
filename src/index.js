@@ -1,67 +1,43 @@
-let randomNumber = Math.floor(Math.random() * 100) + 1;
-const guesses = document.querySelector('.guesses');
-const lastResult = document.querySelector('.lastResult');
-const lowOrHi = document.querySelector('.lowOrHi');
-const guessSubmit = document.querySelector('.guessSubmit');
-const guessField = document.querySelector('.guessField');
-let guessCount = 1;
-let resetButton;
+var courses = document.querySelector("#box1");
 
-function checkGuess() {
-  let userGuess = Number(guessField.value);
-  if (guessCount === 1) {
-    guesses.textContent = 'Previous guesses: ';
-  }
+const coursesEn = ["Hamburger, cream sauce and poiled potates",
+                "Goan style fish curry and whole grain rice",
+                "Vegan Chili sin carne and whole grain rice",
+                "Broccoli puree soup, side salad with two napas",
+                "Lunch baguette with BBQ-turkey filling",
+                "Cheese / Chicken / Vege / Halloum burger and french fries"];
 
-  guesses.textContent += userGuess + ' ';
+const coursesFi = ["Jauhelihapihvi, ruskeaa kermakastiketta ja keitettyä perunaa",
+                "Goalaista kalacurrya ja täysjyväriisiä",
+                "vegaani Chili sin carne ja täysjyväriisi",
+                "Parsakeittoa,lisäkesalaatti kahdella napaksella",
+                "Lunch baguette with BBQ-turkey filling",
+                "Juusto / Kana / Kasvis / Halloumi burgeri ja ranskalaiset"];
 
-  if (userGuess === randomNumber) {
-    lastResult.textContent = 'Congratulations! You got it right!';
-    lastResult.style.backgroundColor = 'green';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else if (guessCount === 10) {
-    lastResult.textContent = '!!!GAME OVER!!!';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else {
-    lastResult.textContent = 'Wrong!';
-    lastResult.style.backgroundColor = 'red';
-    if(userGuess < randomNumber) {
-      lowOrHi.textContent = 'Last guess was too low!' ;
-    } else if(userGuess > randomNumber) {
-      lowOrHi.textContent = 'Last guess was too high!';
-    }
-  }
+                function teksti() {
+                    var e = document.getElementById("lang-switch");
+                    var Suomi = e.options[e.selectedIndex].text;
+                    console.log(Suomi);
 
-  guessCount++;
-  guessField.value = '';
-  guessField.focus();
-}
+                    if(Suomi === 'Suomi'){
+                        courses = coursesFi;
+                        document.getElementById("box1").innerHTML = coursesFi.map(courseFi => courseFi);
+                    }
 
-guessSubmit.addEventListener('click', checkGuess);
+                    if(Suomi === 'English'){
+                        courses = coursesEn;
+                        document.getElementById("box1").innerHTML = coursesEn.map(courseEn => courseEn);
+                    }
+                }
 
-function setGameOver() {
-  guessField.disabled = true;
-  guessSubmit.disabled = true;
-  resetButton = document.createElement('button');
-  resetButton.textContent = 'Start new game';
-  document.body.appendChild(resetButton);
-  resetButton.addEventListener('click', resetGame);
-}
 
-function resetGame() {
-  guessCount = 1;
-  const resetParas = document.querySelectorAll('.resultParas p');
-  for(let i = 0 ; i < resetParas.length ; i++) {
-    resetParas[i].textContent = '';
-  }
+                function sort() {
+                    courses.sort();
+                    /*courses.reverse();*/
+                    document.getElementById("box1").innerHTML = courses;
+                }
 
-  resetButton.parentNode.removeChild(resetButton);
-  guessField.disabled = false;
-  guessSubmit.disabled = false;
-  guessField.value = '';
-  guessField.focus();
-  lastResult.style.backgroundColor = 'white';
-  randomNumber = Math.floor(Math.random() * 100) + 1;
-}
+                function random() {
+                    var random = courses[Math.floor(Math.random()*courses.length)];
+                    window.alert(random);
+                }
