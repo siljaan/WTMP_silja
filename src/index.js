@@ -1,4 +1,9 @@
-let randomNumber = Math.floor(Math.random() * 100) + 1;
+const maxNumber = 1000;
+const minNumber = 100;
+const numberCount = 10;
+const timeStart = document.querySelector('.timeStart');
+const timeStop = document.querySelector('.timeStop');
+let randomNumber = Math.floor(Math.random() * maxNumber) + minNumber;
 const guesses = document.querySelector('.guesses');
 const lastResult = document.querySelector('.lastResult');
 const lowOrHi = document.querySelector('.lowOrHi');
@@ -8,6 +13,7 @@ let guessCount = 1;
 let resetButton;
 
 function checkGuess() {
+  timeStart.textContent = Date.now();
   let userGuess = Number(guessField.value);
   if (guessCount === 1) {
     guesses.textContent = 'Previous guesses: ';
@@ -20,7 +26,7 @@ function checkGuess() {
     lastResult.style.backgroundColor = 'green';
     lowOrHi.textContent = '';
     setGameOver();
-  } else if (guessCount === 10) {
+  } else if (guessCount === numberCount) {
     lastResult.textContent = '!!!GAME OVER!!!';
     lowOrHi.textContent = '';
     setGameOver();
@@ -42,6 +48,7 @@ function checkGuess() {
 guessSubmit.addEventListener('click', checkGuess);
 
 function setGameOver() {
+  timeStop.textContent = Date.now();
   guessField.disabled = true;
   guessSubmit.disabled = true;
   resetButton = document.createElement('button');
@@ -63,5 +70,5 @@ function resetGame() {
   guessField.value = '';
   guessField.focus();
   lastResult.style.backgroundColor = 'white';
-  randomNumber = Math.floor(Math.random() * 100) + 1;
+  randomNumber = Math.floor(Math.random() * maxNumber) + minNumber;
 }
