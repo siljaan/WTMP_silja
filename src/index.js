@@ -1,74 +1,128 @@
-const maxNumber = 1000;
-const minNumber = 100;
-const numberCount = 10;
-const timeStart = document.querySelector('.timeStart');
-const timeStop = document.querySelector('.timeStop');
-let randomNumber = Math.floor(Math.random() * maxNumber) + minNumber;
-const guesses = document.querySelector('.guesses');
-const lastResult = document.querySelector('.lastResult');
-const lowOrHi = document.querySelector('.lowOrHi');
-const guessSubmit = document.querySelector('.guessSubmit');
-const guessField = document.querySelector('.guessField');
-let guessCount = 1;
-let resetButton;
+const showMenu = document.querySelector('.showMenu');
+const menuItem = document.querySelector('.menuId');
+const orderMenu = document.querySelector('.orderMenu');
+const showMinMenu = document.querySelector('.showMinMenu');
+const raiseMenu = document.querySelector('.raiseMenu');
+const priseMenu = document.querySelector('.priseMenu');
+const fazerMenu = document.querySelector('.fazerMenu');
 
-function checkGuess() {
-  timeStart.textContent = Date.now();
-  let userGuess = Number(guessField.value);
-  if (guessCount === 1) {
-    guesses.textContent = 'Previous guesses: ';
+import FazerMenu from "./fazer-week-example.json";// importataan paikallisessa hakemistossa oleva json tiedosto
+
+const menuList = [
+  { name: 'Lingonberry jam', price: 4.00 },
+  { name: 'Mushroom and bean casserole', price: 5.50 },
+  { name: 'Chili-flavoured wheat', price: 3.00 },
+  { name: 'Vegetarian soup', price: 4.80 },
+  { name: 'Pureed root vegetable soup with smoked cheese', price: 8.00 }
+];
+
+//Näytä menun sisältö kokonaan tai per ID
+function showMenuId() {
+  var id = Number(menuItem.value) - 1;
+
+  if (id >= menuList.length || id <= -1) {
+
+
+    //document.getElementById("box").innerHTML = menuList.map(menuList => menuList);
+    document.getElementById("box").innerHTML = menuList.map(select);
+
+    function select(value) {
+      return value.name;
+    }
+
+
+  } else {
+    var meal = menuList[id].name;
+    document.getElementById("box").innerHTML = meal;
+
+    const regexpPattern = /^[A-ZÖÄÅ]{1}[a-zöäå0-9.!-/_ ]{4,64}$/;
+    const status = regexpPattern.test(meal);
+
+    window.alert(status);
+
+  }
+}
+showMenu.addEventListener('click', showMenuId);
+
+// Järjestä hinnan mukaan (tässä on vain hinnat = pitäisi saada myös sisällöt mukaan)
+function sortByPrise() {
+
+  var menuListPrise = menuList.map(select);
+  document.getElementById("box").innerHTML = menuListPrise.sort();
+
+  function select(value, index, array) {
+    return value.price;
+  }
+}
+orderMenu.addEventListener('click', sortByPrise);
+
+//Laskee summan
+function sumMenu() {
+
+  var menuListPrise = menuList.map(select);
+  document.getElementById("priseTotal").innerHTML = menuListPrise.reduce(getSum, 1);
+
+  function select(value, index, array) {
+    return value.price;
   }
 
-  guesses.textContent += userGuess + ' ';
+  function getSum(total, num) {
+    return total + Math.round(num);
+  }
 
-  if (userGuess === randomNumber) {
-    lastResult.textContent = 'Congratulations! You got it right!';
-    lastResult.style.backgroundColor = 'green';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else if (guessCount === numberCount) {
-    lastResult.textContent = '!!!GAME OVER!!!';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else {
-    lastResult.textContent = 'Wrong!';
-    lastResult.style.backgroundColor = 'red';
-    if(userGuess < randomNumber) {
-      lowOrHi.textContent = 'Last guess was too low!' ;
-    } else if(userGuess > randomNumber) {
-      lowOrHi.textContent = 'Last guess was too high!';
+}
+priseMenu.addEventListener('click', sumMenu);
+
+
+function fazer() {
+//window.alert(FazerMenu.LunchMenus[0].DayOfWeek);
+
+  var fazerMenuListLength = FazerMenu.LunchMenus[0].SetMenus.length; //json importattu jo alussa
+  document.getElementById("box").innerHTML = "";
+
+  //    var x;
+  //   for (x in fazerMenuList){
+  //   document.getElementById("box").innerHTML += fazerMenuList[x] + "<br>";
+  //   }
+  // }
+
+
+  for (var i = 0; i < fazerMenuListLength; i++) {
+
+    var fazerMenuList = FazerMenu.LunchMenus[0].SetMenus[i].Meals.map(select);
+    document.getElementById("box").innerHTML += fazerMenuList + "<br>";
+
+    function select(item) {
+
+      var dish = item.Name;
+      return dish;
     }
   }
 
-  guessCount++;
-  guessField.value = '';
-  guessField.focus();
 }
+fazerMenu.addEventListener('click', fazer);
 
-guessSubmit.addEventListener('click', checkGuess);
+// Nosta hintoja 15%
+function risePrice() {
 
-function setGameOver() {
-  timeStop.textContent = Date.now();
-  guessField.disabled = true;
-  guessSubmit.disabled = true;
-  resetButton = document.createElement('button');
-  resetButton.textContent = 'Start new game';
-  document.body.appendChild(resetButton);
-  resetButton.addEventListener('click', resetGame);
-}
+  var menuListPrise = menuList.map(select);
+  document.getElementById("box").innerHTML = menuListPrise;
 
-function resetGame() {
-  guessCount = 1;
-  const resetParas = document.querySelectorAll('.resultParas p');
-  for(let i = 0 ; i < resetParas.length ; i++) {
-    resetParas[i].textContent = '';
+  function select(value) {
+    return Math.round(value.price * 115)/100;
   }
-
-  resetButton.parentNode.removeChild(resetButton);
-  guessField.disabled = false;
-  guessSubmit.disabled = false;
-  guessField.value = '';
-  guessField.focus();
-  lastResult.style.backgroundColor = 'white';
-  randomNumber = Math.floor(Math.random() * maxNumber) + minNumber;
 }
+raiseMenu.addEventListener('click', risePrice);
+
+// Näytä menu alle 5€
+function showMinPrice() {
+
+  var menuListPrise = menuList.find(select);
+  document.getElementById("box").innerHTML = menuListPrise;
+
+  function select(value) {
+
+    return value.price < 5.0;
+  }
+}
+showMinMenu.addEventListener('click', showMinPrice);
