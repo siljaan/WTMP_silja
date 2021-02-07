@@ -1,119 +1,42 @@
-const showMenu = document.querySelector('.showMenu');
-const menuItem = document.querySelector('.menuId');
-const orderMenu = document.querySelector('.orderMenu');
-const showMinMenu = document.querySelector('.showMinMenu');
-const raiseMenu = document.querySelector('.raiseMenu');
-const priseMenu = document.querySelector('.priseMenu');
-const fazerMenu = document.querySelector('.fazerMenu');
+const maanantaiLista = [];
 
-import FazerMenu from "./fazer-week-example.json";
-
-const menuList = [
-  { name: 'Lingonberry jam', price: 4.00 },
-  { name: 'Mushroom and bean casserole', price: 5.50 },
-  { name: 'Chili-flavoured wheat', price: 3.00 },
-  { name: 'Vegetarian soup', price: 4.80 },
-  { name: 'Pureed root vegetable soup with smoked cheese', price: 8.00 }
-];
-
-function showMenuId() {
-  var id = Number(menuItem.value) - 1;
-
-  if (id >= menuList.length || id <= -1) {
-
-    document.getElementById("box").innerHTML = menuList.map(select);
-
-    function select(value, index, array) {
-      return value.name;
-    }
-  } else {
-    var meal = menuList[id].name;
-    document.getElementById("box").innerHTML = meal;
-
-    const regexpPattern = /^[A-ZÖÄÅ]{1}[a-zöäå0-9.!-/_ ]{4,64}$/;
-    const status = regexpPattern.test(meal);
-
-    window.alert(status);
-
+//Tässä fetchataan eli haetaan url:sta .json tiedosto
+const fetchJSON = async () => {
+  try {
+    //haetaan tiedosto ja muutetaan json muotoon res.json().
+    await fetch(
+      "https://www.sodexo.fi/ruokalistat/output/weekly_json/152"
+    ).then((res) =>
+      //muutetaan json muotoon ja lisätään data listaan.
+      res.json().then((data) =>
+        maanantaiLista.push({
+          ravintola: data.meta.ref_title,
+          courses: data.mealdates[0].courses,
+        })
+      )
+    );
+    mondayFood();
+  } catch (err) {
+    console.error(err);
   }
-}
-showMenu.addEventListener('click', showMenuId);
+};
 
+fetchJSON();
 
-// Järjestä hinnan mukaan
-function sortByPrise() {
+const mondayFood = () => {
 
-document.getElementById("box").innerHTML = "";
-let sortedMenu = menuList.sort((b, a) => {
-  return b.price - a.price;
-});
-document.getElementById("box").innerHTML = sortedMenu.map(select);
+  let kotiRuoka = maanantaiLista[0].courses[1];
+  let kasvisRuoka = maanantaiLista[0].courses[2];
+  let jalkiRuoka = maanantaiLista[0].courses[4];
 
-function select(value, index, array) {
-return value.name;
- }
-}
-
-orderMenu.addEventListener('click', sortByPrise);
-
-//Laskee summan
-function sumMenu() {
-
-  var menuListPrise = menuList.map(select);
-  document.getElementById("priseTotal").innerHTML = menuListPrise.reduce(getSum, 1);
-
-  function select(value, index, array) {
-    return value.price;
-  }
-
-  function getSum(total, num) {
-    return total + Math.round(num);
-  }
-
-}
-priseMenu.addEventListener('click', sumMenu);
-
-
-function fazer() {
-
-  var fazerMenuListLength = FazerMenu.LunchMenus[0].SetMenus.length;
-  document.getElementById("box").innerHTML = "";
-
-  for (var i = 0; i < fazerMenuListLength; i++) {
-
-    var fazerMenuList = FazerMenu.LunchMenus[0].SetMenus[i].Meals.map(select);
-    document.getElementById("box").innerHTML += fazerMenuList + "<br>";
-
-    function select(item) {
-
-      var dish = item.Name;
-      return dish;
-    }
-  }
-}
-fazerMenu.addEventListener('click', fazer);
-
-// Nosta hintoja 15%
-function risePrice() {
-
-  var menuListPrise = menuList.map(select);
-  document.getElementById("box").innerHTML = menuListPrise;
-
-  function select(value) {
-    return Math.round(value.price * 115)/100;
-  }
-}
-raiseMenu.addEventListener('click', risePrice);
-
-// Näytä menu alle 5€
-function showMinPrice() {
-
-  var menuListPrise = menuList.find(select);
-  document.getElementById("box").innerHTML = menuListPrise;
-
-  function select(value) {
-
-    return value.price < 5.0;
-  }
-}
-showMinMenu.addEventListener('click', showMinPrice);
+  //haetaan html tiedostosta ravintolan paikan nimi ja [0] viittaa ensimmäiseen menulaatikkoon
+  let titleRes = document.getElementsByClassName("res")[0];
+  titleRes.innerHTML = maanantaiLista[0].ravintola;
+  let menutext = document.getElementsByClassName("menutext")[0];
+  menutext.innerHTML = `<h3>Kotiruoka</h3>
+  ${kotiRuoka.title_fi}
+  <h3> Kasvisruoka </h3>
+  ${kasvisRuoka.title_fi}
+  <h3> Jälkiruoka </h3>
+  ${jalkiRuoka.title_fi}`;
+};
