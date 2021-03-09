@@ -1,42 +1,49 @@
-const maanantaiLista = [];
-
-//Tässä fetchataan eli haetaan url:sta .json tiedosto
-const fetchJSON = async () => {
-  try {
-    //haetaan tiedosto ja muutetaan json muotoon res.json().
-    await fetch(
-      "https://www.sodexo.fi/ruokalistat/output/weekly_json/152"
-    ).then((res) =>
-      //muutetaan json muotoon ja lisätään data listaan.
-      res.json().then((data) =>
-        maanantaiLista.push({
-          ravintola: data.meta.ref_title,
-          courses: data.mealdates[0].courses,
-        })
-      )
-    );
-    mondayFood();
-  } catch (err) {
-    console.error(err);
-  }
+window.onhashchange = function(){
+  // render function is called every hash change.
+  render(window.location.hash);
 };
 
-fetchJSON();
+function render(hashKey) {
 
-const mondayFood = () => {
+//first hide all divs
+let pages = document.querySelectorAll(".page");
+for (let i = 0; i < pages.length; ++i) {
+  pages[i].style.display = 'none';
+}
 
-  let kotiRuoka = maanantaiLista[0].courses[1];
-  let kasvisRuoka = maanantaiLista[0].courses[2];
-  let jalkiRuoka = maanantaiLista[0].courses[4];
+//...now do same with lis
+let lis_nav = document.querySelectorAll(".box");
+for (let i = 0; i < lis_nav.length; ++i) {
+  lis_nav[i].classList.remove("active");
+}
 
-  //haetaan html tiedostosta ravintolan paikan nimi ja [0] viittaa ensimmäiseen menulaatikkoon
-  let titleRes = document.getElementsByClassName("res")[0];
-  titleRes.innerHTML = maanantaiLista[0].ravintola;
-  let menutext = document.getElementsByClassName("menutext")[0];
-  menutext.innerHTML = `<h3>Kotiruoka</h3>
-  ${kotiRuoka.title_fi}
-  <h3> Kasvisruoka </h3>
-  ${kasvisRuoka.title_fi}
-  <h3> Jälkiruoka </h3>
-  ${jalkiRuoka.title_fi}`;
-};
+//then unhide the one that user selected
+//console.log(hashKey);
+switch(hashKey){
+  case "":
+      pages[0].style.display = 'block';
+      document.getElementsByClassName("logo").classList.add("active");
+      break;
+  case "#menu":
+      pages[1].style.display = 'block';
+      document.getElementById("box1").classList.add("active");
+      break;
+  case "#time":
+      pages[2].style.display = 'block';
+      document.getElementById("box2").classList.add("active");
+      break;
+  case "#weather":
+      pages[3].style.display = 'block';
+      document.getElementById("box3").classList.add("active");
+      break;
+  case "#event":
+      pages[4].style.display = 'block';
+      document.getElementById("box4").classList.add("active");
+      break;
+  default:
+      pages[0].style.display = 'block';
+      document.getElementsByClassName("logo").classList.add("active");
+}// end switch
+
+};//end fn
+
